@@ -34,11 +34,11 @@ vectorstore = Chroma.from_documents(
     persist_directory="chroma_db"
 )
 
-# 5. ดึงข้อมูลที่เกี่ยวข้อง
+# 5. ดึงข้อมูลที่เกี่ยวข้อง ค่าkคือค่าที่ใกล้เคียง
 def retrieve(query: str):
     return vectorstore.similarity_search(query, k=3)
 
-# 6. ใช้ Ollama ในการสร้างคำตอบ
+# 6. ใช้ Ollama ในการสร้างคำตอบ และปรับแต่งให้aiต้องตอบคำถามไปแนวไหน
 def generate_answer(query: str, context: str) -> str:
     messages = [
         {
@@ -52,6 +52,8 @@ def generate_answer(query: str, context: str) -> str:
     ]
     response = chat(model="llama3.2:latest", messages=messages)
     return response["message"]["content"]
+
+
 
 # 7. Streamlit UI
 st.set_page_config(page_title="RAG Chatbot กยศ", page_icon="📄")
@@ -81,4 +83,3 @@ if user_query:
       ##  snippet = doc.page_content[:300].strip().replace("\n", " ")
       ##  st.markdown(f"**{i}.** `{source}`")
        ## st.markdown(f"> {snippet}...")
-
