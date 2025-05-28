@@ -1,0 +1,7 @@
+streamlit
+bcrypt
+openai
+pandas
+numpy
+sentence-transformers
+PyMuPDF
