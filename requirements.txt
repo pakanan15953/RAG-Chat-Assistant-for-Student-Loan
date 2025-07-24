@@ -7,4 +7,4 @@ sentence-transformers
 PyMuPDF
 langchain-community
 ollama
-unstructured
+unstructured[docx]
