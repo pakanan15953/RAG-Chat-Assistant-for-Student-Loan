@@ -8,7 +8,6 @@ from langchain_community.document_loaders import UnstructuredFileLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import FAISS
-from langchain_community.vectorstores import Chroma
 from ollama import chat
 
 # ---------------------- Logging Setup ----------------------
@@ -61,12 +60,12 @@ logging.info(f"✅ Document split into {len(chunks)} chunks")
 # 3. Use HuggingFace multilingual embeddings
 embeddings = HuggingFaceEmbeddings(
     model_name="intfloat/multilingual-e5-large",
-    model_kwargs={"device": "cpu"},  # บังคับใช้ CPU เท่านั้น
+    model_kwargs={"device": "cpu"},  # ใช้ CPU เท่านั้น
     encode_kwargs={"normalize_embeddings": True}
 )
 logging.info("💡 Embedding model loaded")
 
-# 4. Create vector store
+# 4. Create vector store with FAISS
 vectorstore = FAISS.from_documents(
     documents=chunks,
     embedding=embeddings
@@ -77,27 +76,29 @@ logging.info("📚 Vector store created successfully")
 def retrieve(query: str):
     return vectorstore.similarity_search(query, k=3)
 
-# 6. Answer generation with Ollama
+# 6. Generate answer with Ollama
 def generate_answer(query: str, context: str) -> str:
     messages = [
         {
             "role": "system",
-            "content": "คุณเป็น ai ผู้ช่วยในการตอบคำถามเกี่ยวกับคุณสมบัติผู้กู้ยืมกยศ ตอบคำถามให้ถูกต้องและอ้างอิงจากบริบทที่ให้มาเท่านั้น เขียนลงท้ายด้วยคำว่า ครับ "
+            "content": (
+                "คุณเป็น ai ผู้ช่วยในการตอบคำถามเกี่ยวกับคุณสมบัติผู้กู้ยืมกยศ "
+                "ตอบคำถามให้ถูกต้องและอ้างอิงจากบริบทที่ให้มาเท่านั้น "
+                "เขียนลงท้ายด้วยคำว่า ครับ"
+            )
         },
         {
-        "role": "user",
-        "content": (
-            "Context:\n"
-            f"{context}\n\n"
-            "ตัวอย่างคำถาม-คำตอบ:\n"
-            "Q: รายได้ครอบครัวของผู้กู้ต้องไม่เกินเท่าไหร่ต่อปี?\n"
-            "A: ไม่เกิน 360,000 บาทต่อปีครับ\n"
-            "Q: คนอายุ 33 ปี ยังสามารถกู้ได้หรือไม่?\n"
-            "A: ได้ครับ เฉพาะลักษณะที่ 4 (จำกัดอายุไม่เกิน 35 ปี)\n\n"
-            f"Q: {user_query}\n"
-            "A:"
-        )
-    }
+            "role": "user",
+            "content": (
+                f"Context:\n{context}\n\n"
+                "ตัวอย่างคำถาม-คำตอบ:\n"
+                "Q: รายได้ครอบครัวของผู้กู้ต้องไม่เกินเท่าไหร่ต่อปี?\n"
+                "A: ไม่เกิน 360,000 บาทต่อปีครับ\n"
+                "Q: คนอายุ 33 ปี ยังสามารถกู้ได้หรือไม่?\n"
+                "A: ได้ครับ เฉพาะลักษณะที่ 4 (จำกัดอายุไม่เกิน 35 ปี)\n\n"
+                f"Q: {query}\nA:"
+            )
+        }
     ]
     response = chat(model="llama3.2:latest", messages=messages)
     return response["message"]["content"]
@@ -124,11 +125,8 @@ if user_query:
         logging.info("✅ Answer generated")
 
     # Show result
-    st.markdown(user_query)
-    st.markdown(" ✅ คำตอบ")
-    st.markdown(answer)
+    st.markdown(f"**คำถาม:** {user_query}")
+    st.markdown(f"**คำตอบ:** {answer}")
 
     # Save to DB
     save_question_to_db(user_query, answer)
-
-
