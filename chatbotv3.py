@@ -60,7 +60,7 @@ logging.info(f"✅ Document split into {len(chunks)} chunks")
 # 3. Use HuggingFace multilingual embeddings
 embeddings = HuggingFaceEmbeddings(
     model_name="intfloat/multilingual-e5-large",
-    model_kwargs={"device": "cuda" if torch.cuda.is_available() else "cpu"},
+    model_kwargs={"device": "cpu"},  # บังคับใช้ CPU เท่านั้น
     encode_kwargs={"normalize_embeddings": True}
 )
 logging.info("💡 Embedding model loaded")
