@@ -9,3 +9,4 @@ langchain-community
 unstructured[docx]
 ollama
 torch
+chromadb
