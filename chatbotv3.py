@@ -1,4 +1,5 @@
 import os
+os.environ["OLLAMA_HOST"] = "http://192.168.1.10:11434"
 import torch
 import streamlit as st
 import logging
