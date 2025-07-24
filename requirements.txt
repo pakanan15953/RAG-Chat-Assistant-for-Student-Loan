@@ -6,3 +6,4 @@ numpy
 sentence-transformers
 PyMuPDF
 langchain-community
+ollama
