@@ -6,5 +6,6 @@ numpy
 sentence-transformers
 PyMuPDF
 langchain-community
-ollama
 unstructured[docx]
+ollama
+torch
