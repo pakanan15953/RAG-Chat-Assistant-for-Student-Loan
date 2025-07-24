@@ -10,3 +10,4 @@ langchain-community>=0.0.194
 unstructured[docx]
 ollama
 torch
+faiss-cpu
