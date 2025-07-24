@@ -5,3 +5,4 @@ pandas
 numpy
 sentence-transformers
 PyMuPDF
+langchain-community
