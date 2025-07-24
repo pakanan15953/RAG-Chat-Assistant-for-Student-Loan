@@ -5,8 +5,8 @@ pandas
 numpy
 sentence-transformers
 PyMuPDF
-langchain-community
+chromadb>=0.3.26
+langchain-community>=0.0.194
 unstructured[docx]
 ollama
 torch
-chromadb
