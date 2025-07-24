@@ -1,5 +1,5 @@
 import os
-os.environ["OLLAMA_HOST"] = "http://192.168.1.10:11434"
+os.environ["OLLAMA_HOST"] = "https://c5755358f4b1.ngrok-free.app"
 import torch
 import streamlit as st
 import logging
