@@ -7,6 +7,7 @@ from datetime import datetime
 from langchain_community.document_loaders import UnstructuredFileLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain.vectorstores import FAISS
 from langchain_community.vectorstores import Chroma
 from ollama import chat
 
@@ -66,10 +67,9 @@ embeddings = HuggingFaceEmbeddings(
 logging.info("💡 Embedding model loaded")
 
 # 4. Create vector store
-vectorstore = Chroma.from_documents(
+vectorstore = FAISS.from_documents(
     documents=chunks,
-    embedding=embeddings,
-    persist_directory="chroma_db"
+    embedding=embeddings
 )
 logging.info("📚 Vector store created successfully")
 
