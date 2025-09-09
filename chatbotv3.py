@@ -12,6 +12,8 @@ from ollama import chat
 
 # ---------------------- Logging Setup ----------------------
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+device = "cuda" if torch.cuda.is_available() else "cpu"
+logging.info(f"Using device: {device}")
 
 # ---------------------- Database Setup ----------------------
 def init_db():
@@ -41,31 +43,28 @@ def save_question_to_db(question, answer):
     logging.info("✅ Saved question to database.")
 
 # ---------------------- RAG Pipeline ----------------------
-# 1. Load document
 logging.info("📄 Loading document...")
 loader = UnstructuredFileLoader("Loan_Features.docx")
 docs = loader.load()
 
-# Check if document loaded properly
 if not docs or not docs[0].page_content.strip():
     logging.error("❌ เอกสารไม่มีเนื้อหา หรือโหลดไม่สำเร็จ")
     st.error("❌ เอกสารไม่มีเนื้อหา หรือโหลดไม่สำเร็จ")
     st.stop()
 
-# 2. Split into chunks
 splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
 chunks = splitter.split_documents(docs)
 logging.info(f"✅ Document split into {len(chunks)} chunks")
 
-# 3. Use HuggingFace multilingual embeddings
+# Embeddings
 embeddings = HuggingFaceEmbeddings(
     model_name="intfloat/multilingual-e5-large",
-    model_kwargs={"device": "cpu"},  # บังคับใช้ CPU เท่านั้น
+    model_kwargs={"device": device},
     encode_kwargs={"normalize_embeddings": True}
 )
 logging.info("💡 Embedding model loaded")
 
-# 4. Create vector store
+# Vector store
 vectorstore = Chroma.from_documents(
     documents=chunks,
     embedding=embeddings,
@@ -73,31 +72,29 @@ vectorstore = Chroma.from_documents(
 )
 logging.info("📚 Vector store created successfully")
 
-# 5. Retrieval function
+# ---------------------- Retrieval with confidence ----------------------
 def retrieve(query: str):
-    return vectorstore.similarity_search(query, k=3)
+    docs_with_score = vectorstore.similarity_search_with_score(query, k=5)
+    
+    # แปลง score เป็น similarity (ยิ่งใกล้ 1 ยิ่งเหมือน)
+    filtered = [(doc, 1 - score) for doc, score in docs_with_score if score < 0.8]
 
-# 6. Answer generation with Ollama
+    # top3
+    top3 = filtered[:3]
+
+    results = []
+    for rank, (doc, similarity) in enumerate(top3, 1):
+        # top1 confidence สูงสุด, top2 ลดลง, top3 ลดลงอีก
+        confidence = similarity * 90 + (3 - rank) * 3  # top1+6, top2+3, top3+0
+        results.append({"doc": doc, "confidence": confidence})
+    
+    return results
+
+# ---------------------- Answer generation ----------------------
 def generate_answer(query: str, context: str) -> str:
     messages = [
-        {
-            "role": "system",
-            "content": "คุณเป็น ai ผู้ช่วยในการตอบคำถามเกี่ยวกับคุณสมบัติผู้กู้ยืมกยศ ตอบคำถามให้ถูกต้องและอ้างอิงจากบริบทที่ให้มาเท่านั้น เขียนลงท้ายด้วยคำว่า ครับ "
-        },
-        {
-        "role": "user",
-        "content": (
-            "Context:\n"
-            f"{context}\n\n"
-            "ตัวอย่างคำถาม-คำตอบ:\n"
-            "Q: รายได้ครอบครัวของผู้กู้ต้องไม่เกินเท่าไหร่ต่อปี?\n"
-            "A: ไม่เกิน 360,000 บาทต่อปีครับ\n"
-            "Q: คนอายุ 33 ปี ยังสามารถกู้ได้หรือไaม่?\n"
-            "A: ได้ครับ เฉพาะลักษณะที่ 4 (จำกัดอายุไม่เกิน 35 ปี)\n\n"
-            f"Q: {user_query}\n"
-            "A:"
-        )
-    }
+        {"role": "system", "content": "คุณเป็น ai ผู้ช่วยตอบคำถามเกี่ยวกับคุณสมบัติผู้กู้ยืมกยศ ตอบจาก context ที่ให้เท่านั้น ลงท้ายคำตอบด้วยคำว่า ครับ"},
+        {"role": "user", "content": f"Context:\n{context}\n\nQ: {query}\nA:"}
     ]
     response = chat(model="llama3.2:latest", messages=messages)
     return response["message"]["content"]
@@ -116,19 +113,20 @@ user_query = st.chat_input("❓ ถามคำถามเกี่ยวกั
 if user_query:
     with st.spinner("📚 กำลังค้นหาข้อมูลที่เกี่ยวข้อง..."):
         retrieved_docs = retrieve(user_query)
-        context = "\n\n".join([doc.page_content for doc in retrieved_docs])
-        logging.info("🔍 Retrieved relevant context")
+        context_parts = []
+        for i, item in enumerate(retrieved_docs, 1):
+            context_parts.append(f"{item['doc'].page_content} [Confidence: {item['confidence']:.1f}%]")
+        context = "\n\n".join(context_parts)
+        logging.info("🔍 Retrieved relevant context with confidence")
 
     with st.spinner("🧠 กำลังสร้างคำตอบ..."):
         answer = generate_answer(user_query, context)
         logging.info("✅ Answer generated")
 
     # Show result
-    st.markdown(user_query)
-    st.markdown(" ✅ คำตอบ")
+    st.markdown(f"**คำถาม:** {user_query}")
+    st.markdown("**คำตอบ:**")
     st.markdown(answer)
 
     # Save to DB
     save_question_to_db(user_query, answer)
-
-
