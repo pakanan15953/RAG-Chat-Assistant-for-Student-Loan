@@ -1,16 +1,17 @@
-import sqlite3
-import hashlib
+import shutil
 
-def hash_password(password):
-    return hashlib.sha256(password.encode()).hexdigest()
+persist_dir = "chroma_db"
 
-conn = sqlite3.connect("adminMN.db")
-cursor = conn.cursor()
-cursor.execute("""
-    INSERT INTO users (username, password_hash, role, full_name, email) 
-    VALUES (?, ?, ?, ?, ?)
-""", ("thi", hash_password("fasai"), "staff", "ผู้ใช้ใหม่", "fasai.com")) 
-#ถ้าจะเพิ่มID-PASSWORD แก้บรรทัด12 user คือ ไอดี password คือรหัส staff คือ โรลผู้ใช้ สุดท้ายคือ email
-conn.commit()
-conn.close()
+# ลบ persist directory เก่า
+shutil.rmtree(persist_dir, ignore_errors=True)
 
+# สร้าง DB ใหม่
+vectorstore = Chroma(
+    collection_name="my_collection",
+    embedding_function=embeddings,
+    persist_directory=persist_dir
+)
+
+# เพิ่มเอกสารลง DB
+vectorstore.add_documents(chunks)
+vectorstore.persist()

@@ -1,0 +1,275 @@
+/* Clean white background */
+[data-testid="stAppViewContainer"] {
+    background: #ffffff !important;
+}
+
+[data-testid="stSidebar"] {
+    background-color: #fafafa !important;
+    border-right: 1px solid #e5e7eb !important;
+}
+
+[data-testid="stSidebar"] * {
+    color: #374151 !important;
+}
+
+/* Main content area */
+.main {
+    background: transparent !important;
+    color: #374151 !important;
+}
+
+/* All text elements */
+.stMarkdown, .stMarkdown p, .stMarkdown li, .stMarkdown span {
+    color: #374151 !important;
+}
+
+/* Chat messages */
+.stChatMessage {
+    background-color: #f9fafb !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 12px !important;
+    padding: 1.2rem !important;
+    margin: 0.8rem 0 !important;
+    color: #374151 !important;
+}
+
+.stChatMessage * {
+    color: #374151 !important;
+}
+
+/* User message */
+.stChatMessage[data-testid*="user"] {
+    background-color: #f0f9ff !important;
+    border-left: 3px solid #3b82f6 !important;
+}
+
+/* Assistant message */
+.stChatMessage[data-testid*="assistant"] {
+    background-color: #f9fafb !important;
+    border-left: 3px solid #10b981 !important;
+}
+
+/* Header */
+.chat-header {
+    background: white !important;
+    padding: 2.5rem !important;
+    border-radius: 16px !important;
+    border: 2px solid #e5e7eb !important;
+    text-align: center !important;
+    margin-bottom: 2rem !important;
+}
+
+.chat-header h1 {
+    color: #3b82f6 !important;
+    margin: 0 !important;
+}
+
+.chat-header p {
+    color: #6b7280 !important;
+}
+
+/* Info boxes */
+.info-box {
+    background: #f0f9ff !important;
+    padding: 1.5rem !important;
+    border-radius: 12px !important;
+    border: 1px solid #bfdbfe !important;
+    margin: 1rem 0 !important;
+}
+
+.info-box * {
+    color: #1e40af !important;
+}
+
+.info-box h3 {
+    color: #1e3a8a !important;
+    margin-top: 0 !important;
+}
+
+.success-box {
+    background: #f0fdf4 !important;
+    padding: 1.5rem !important;
+    border-radius: 12px !important;
+    border: 1px solid #bbf7d0 !important;
+    margin: 1rem 0 !important;
+}
+
+.success-box * {
+    color: #15803d !important;
+}
+
+.warning-box {
+    background: #fffbeb !important;
+    padding: 1.5rem !important;
+    border-radius: 12px !important;
+    border: 1px solid #fde68a !important;
+    margin: 1rem 0 !important;
+}
+
+.warning-box * {
+    color: #92400e !important;
+}
+
+/* Buttons */
+.stButton>button {
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+    transition: all 0.2s ease !important;
+    color: #374151 !important;
+    background-color: #f9fafb !important;
+    border: 1px solid #d1d5db !important;
+    padding: 0.5rem 1rem !important;
+}
+
+.stButton>button:hover {
+    background-color: #f3f4f6 !important;
+    border-color: #9ca3af !important;
+}
+
+.stButton>button[kind="primary"] {
+    background-color: #3b82f6 !important;
+    color: white !important;
+    border: none !important;
+}
+
+.stButton>button[kind="primary"]:hover {
+    background-color: #2563eb !important;
+}
+
+/* Feedback section */
+.feedback-section {
+    background: white !important;
+    padding: 2rem !important;
+    border-radius: 16px !important;
+    border: 2px solid #e5e7eb !important;
+    margin-top: 2rem !important;
+}
+
+.feedback-section * {
+    color: #374151 !important;
+}
+
+.feedback-section h2 {
+    color: #3b82f6 !important;
+}
+
+/* Headers */
+h1, h2, h3, h4, h5, h6 {
+    color: #1f2937 !important;
+}
+
+/* Radio buttons */
+.stRadio > label {
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    color: #374151 !important;
+}
+
+.stRadio label {
+    color: #374151 !important;
+}
+
+/* Text input */
+.stTextInput > div > div > input,
+.stTextArea > div > div > textarea {
+    background-color: white !important;
+    color: #374151 !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 8px !important;
+}
+
+.stTextInput > div > div > input:focus,
+.stTextArea > div > div > textarea:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+.stTextInput label,
+.stTextArea label {
+    color: #374151 !important;
+    font-weight: 500 !important;
+}
+
+/* Chat input */
+.stChatInput > div {
+    background-color: white !important;
+    border: 2px solid #e5e7eb !important;
+    border-radius: 12px !important;
+}
+
+.stChatInput > div:focus-within {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+.stChatInput input {
+    color: #374151 !important;
+    background-color: white !important;
+}
+
+/* Expander */
+.streamlit-expanderHeader {
+    background-color: #f9fafb !important;
+    color: #374151 !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 8px !important;
+}
+
+.streamlit-expanderContent {
+    background-color: white !important;
+    border: 1px solid #e5e7eb !important;
+    border-top: none !important;
+    color: #374151 !important;
+}
+
+/* Metrics */
+[data-testid="stMetric"] {
+    background-color: #f9fafb !important;
+    padding: 1rem !important;
+    border-radius: 10px !important;
+    border: 1px solid #e5e7eb !important;
+}
+
+[data-testid="stMetric"] * {
+    color: #374151 !important;
+}
+
+[data-testid="stMetricLabel"] {
+    color: #6b7280 !important;
+}
+
+[data-testid="stMetricValue"] {
+    color: #1f2937 !important;
+}
+
+/* Spinner */
+.stSpinner > div {
+    border-top-color: #3b82f6 !important;
+}
+
+/* Divider */
+hr {
+    border-color: #e5e7eb !important;
+    margin: 2rem 0 !important;
+}
+
+/* Streamlit info/warning/error boxes */
+.stAlert {
+    background-color: white !important;
+    color: #374151 !important;
+    border-radius: 10px !important;
+    border: 1px solid #e5e7eb !important;
+}
+
+.stAlert [data-testid="stMarkdownContainer"] * {
+    color: #374151 !important;
+}
+
+/* Sidebar info boxes */
+.sidebar-info-box {
+    background: white !important;
+    padding: 1rem !important;
+    border-radius: 10px !important;
+    border: 1px solid #e5e7eb !important;
+    margin: 0.5rem 0 !important;
+}
